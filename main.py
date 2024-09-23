@@ -1,62 +1,67 @@
-import requests
+from Classes import TransportMedel
+from datetime import datetime
 
-api_key = "a083ca434d214b84af23a4a0b15595e7"
+class Tåg(TransportMedel):
+    def __init__(self, api_key):
+        super().__init__(api_key)
 
-fittja = "9283"
-uppsala = "6086"
-sodertalje = "9520"  # Avoid using special characters in variable names like å, ä, ö
+    def get_train_departures(self, site_id, max_minutes):
+        departures = self.get_departures(site_id)
+        train_departures = [d for d in departures if d.get("transport") == "TRAIN"]
+        return self.filter_departures(train_departures, max_minutes)
 
-q = int(input("Enter a number:\n1. Fittja\n2. Uppsala\n3. Södertälje: "))
+class Buss(TransportMedel):
+    def __init__(self, api_key):
+        super().__init__(api_key)
 
-if q == 1:
-    site_id = fittja
-elif q == 2:
-    site_id = uppsala
-elif q == 3:
-    site_id = sodertalje
-else:
-    print("Invalid input")
-    exit()
+    def get_bus_departures(self, site_id, max_minutes):
+        departures = self.get_departures(site_id)
+        bus_departures = [d for d in departures if d.get("transport") == "BUS"]
+        return self.filter_departures(bus_departures, max_minutes)
 
-address = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
+def main():
+    api_key = "a083ca434d214b84af23a4a0b15595e7"
+    
+    locations = {
+        1: ("Fittja", "9283"),
+        2: ("Uppsala", "6086"),
+        3: ("Södertälje", "9520")
+    }
 
-#test test teste teste test test test
+    print("Enter a number:")
+    for key, value in locations.items():
+        print(f"{key}. {value[0]}")
 
+    try:
+        q = int(input())
+        if q not in locations:
+            raise ValueError
+    except ValueError:
+        print("Invalid input")
+        return
 
-res = requests.get(address)
+    site_name, site_id = locations[q]
 
-if res.status_code == 200:
-    data = res.json()
+    train = Tåg(api_key)
+    bus = Buss(api_key)
 
-    departures = data.get("departures", [])
+    max_minutes = 60  # Set to show departures within the next 60 minutes
 
-    # List to store destinations within 20 minutes
-    destinations_time_20 = []
-
-    # Loop through each departure to process destination and display time
-    for departure in departures:
-        destination = departure.get("destination")
-        display = departure.get("display")
-
-        # Check if the display contains "min", meaning it's a time-based display in minutes
-        if display and "min" in display:
-            # Extract the number of minutes from the display
-            try:
-                min_left = int(display.split()[0])
-            except ValueError:
-                # In case the split does not return an integer (e.g., if the format is wrong)
-                continue
-
-            # If departure is within 20 minutes, add the destination and time to the list
-            if min_left <= 20:
-                destinations_time_20.append(f"{destination} - {display}")
-
-    # Print the filtered destinations and times
-    print("Destinations within 20 minutes:")
-    if destinations_time_20:
-        for destination in destinations_time_20:
-            print(destination)
+    print(f"\nTrain departures from {site_name} within the next {max_minutes} minutes:")
+    train_departures = train.get_train_departures(site_id, max_minutes)
+    if train_departures:
+        for departure in train_departures:
+            print(f"{departure['destination']} - Departs at {departure['time']} (in {departure['minutes_left']} minutes)")
     else:
-        print("No departures within the next 10 minutes.")
-else:
-    print(f"Error: Unable to fetch data (status code: {res.status_code})")
+        print(f"No train departures within the next {max_minutes} minutes.")
+
+    print(f"\nBus departures from {site_name} within the next {max_minutes} minutes:")
+    bus_departures = bus.get_bus_departures(site_id, max_minutes)
+    if bus_departures:
+        for departure in bus_departures:
+            print(f"{departure['destination']} - Departs at {departure['time']} (in {departure['minutes_left']} minutes)")
+    else:
+        print(f"No bus departures within the next {max_minutes} minutes.")
+
+if __name__ == "__main__":
+    main()

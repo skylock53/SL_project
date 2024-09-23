@@ -1,30 +1,20 @@
-import requests
-
 class TransportMedel:
-    def __init__(self, api_key):
-        self.api_key = api_key
-        self.base_url = "https://transport.integration.sl.se/v1/sites"
-
-    def get_departures(self, site_id):# -> Any | list[Any]:
-        address = f"{self.base_url}/{site_id}/departures"
-        res = requests.get(address)
-        if res.status_code == 200:
-            return res.json().get("departures", [])
-        else:
-            print(f"Error: Unable to fetch data (status code: {res.status_code})")
-            return []
+    # ... (andra metoder förblir oförändrade)
 
     def filter_departures(self, departures, max_minutes):
         filtered_departures = []
+        now = datetime.now()
         for departure in departures:
             destination = departure.get("destination")
-            display = departure.get("display")
-            if display and "min" in display:
-                try:
-                    min_left = int(display.split()[0])
-                    if min_left <= max_minutes:
-                        filtered_departures.append(f"{destination} - {display}")
-                except ValueError:
-                    continue
+            expected_date_time = departure.get("expected_date_time")
+            if expected_date_time:
+                departure_time = datetime.fromisoformat(expected_date_time.rstrip('Z'))
+                time_diff = departure_time - now
+                minutes_left = time_diff.total_seconds() / 60
+                if 0 <= minutes_left <= max_minutes:
+                    filtered_departures.append({
+                        "destination": destination,
+                        "time": departure_time.strftime("%H:%M"),
+                        "minutes_left": int(minutes_left)
+                    })
         return filtered_departures
-
