@@ -9,7 +9,7 @@ sodertalje = "9520"  # Avoid using special characters in variable names like å,
 sollentuna = "9506"
 skanstull = "9190"
 
-q = int(input("Enter a number:\n1. Fittja\n2. Uppsala\n3. Södertälje: "))
+q = int(input("Enter a number:\n1. Fittja\n2. Uppsala\n3. Södertälje\n4. Sollentuna\n5. Skanstull\n"))
 
 if q == 1:
     site_id = fittja
