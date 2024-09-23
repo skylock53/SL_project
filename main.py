@@ -42,6 +42,8 @@ if res.status_code == 200:
     for departure in departures:
         destination = departure.get("destination")
         display = departure.get("display")
+        line = departure.get("line")
+
 
         # Check if the display contains "min", meaning it's a time-based display in minutes
         if display and "min" in display:
@@ -54,7 +56,10 @@ if res.status_code == 200:
 
             # If departure is within 20 minutes, add the destination and time to the list
             if min_left <= 20:
-                destinations_time_20.append(f"{destination} - {display}")
+                if isinstance(line, dict):
+                    name = line.get("designation")
+                    transport_mode = line.get("transport_mode")
+                    destinations_time_20.append(f"{transport_mode} - {name} {destination} - {display}")
 
     # Print the filtered destinations and times
     print("Destinations within 20 minutes:")
