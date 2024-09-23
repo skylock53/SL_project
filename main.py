@@ -1,5 +1,4 @@
 import requests
-from Classes import TransportMedel
 
 api_key = "a083ca434d214b84af23a4a0b15595e7"
 
