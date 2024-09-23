@@ -20,6 +20,10 @@ elif q == 2:
     site_id = uppsala
 elif q == 3:
     site_id = sodertalje
+elif q == 4:
+    site_id = sollentuna
+elif q == 5:
+    site_id = skanstull
 else:
     print("Invalid input")
     exit()
