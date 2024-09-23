@@ -1,9 +1,6 @@
 import requests
 from Classes import TransportMedel
 
-test = TransportMedel("a083ca434d214b84af23a4a0b15595e7")
-
-
 api_key = "a083ca434d214b84af23a4a0b15595e7"
 
 fittja = "9283"
