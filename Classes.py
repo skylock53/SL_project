@@ -1,3 +1,5 @@
+import datetime
+
 class TransportMedel:
     # ... (andra metoder förblir oförändrade)
 
