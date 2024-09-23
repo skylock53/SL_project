@@ -1,10 +1,16 @@
 import requests
+from Classes import TransportMedel
+
+test = TransportMedel("a083ca434d214b84af23a4a0b15595e7")
+
 
 api_key = "a083ca434d214b84af23a4a0b15595e7"
 
 fittja = "9283"
 uppsala = "6086"
 sodertalje = "9520"  # Avoid using special characters in variable names like å, ä, ö
+sollentuna = "9506"
+skanstull = "9190"
 
 q = int(input("Enter a number:\n1. Fittja\n2. Uppsala\n3. Södertälje: "))
 
@@ -19,8 +25,6 @@ else:
     exit()
 
 address = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
-
-#test test teste teste test test test
 
 
 res = requests.get(address)
