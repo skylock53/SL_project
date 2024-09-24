@@ -37,7 +37,6 @@ class TransportMedel(Transport):
                     min_left = int(display.split()[0])
                 except ValueError:
                     continue
-
                 # Filter by transport mode and time frame
                 if line and line.get("transport_mode") == transport_type and min_left <= max_time:
                     name = line.get("designation")
@@ -51,7 +50,7 @@ class AllTransports(TransportMedel):
         super().__init__(site_id)
 
     def get_departures_by_mode(self, mode):
-        return self.filter_departures(mode)
+         return self.filter_departures(mode.upper())
 
 
 # Main logic for user input and fetching results
@@ -83,7 +82,7 @@ if site_id:
             for departure in departures:
                 print(departure)
         else:
-            print(f"No {transport_mode} departures within the next 20 minutes.")
+         print(f"No {transport_mode} departures within the next 20 minutes.")
     else:
         print("Invalid transport type")
 else:
