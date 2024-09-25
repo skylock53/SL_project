@@ -4,7 +4,7 @@ import requests
 class Transport:
     def __init__(self, site_id):
         self.site_id = site_id
-        self.base_url = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
+        self.base_url: str = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
 
     # Method to fetch departures data
     def fetch_departures(self):
@@ -17,7 +17,7 @@ class Transport:
 
 # Subclass for handling Bus, Train, and Metro
 class TransportMedel(Transport):
-    def __init__(self, site_id):
+    def __init__(self, site_id) -> None:
         # Call the superclass constructor
         super().__init__(site_id)
 
@@ -54,7 +54,7 @@ class AllTransports(TransportMedel):
 
 
 # Main logic for user input and fetching results
-locations = {
+locations: dict[int, str] = {
     1: "9283",  # Fittja
     2: "6086",  # Uppsala
     3: "9520",  # Södertälje
@@ -64,10 +64,10 @@ locations = {
 
 q = int(input("Enter a number:\n1. Fittja\n2. Uppsala\n3. Södertälje\n4. Sollentuna\n5. Skanstull\n"))
 
-site_id = locations.get(q)
+site_id: str | None = locations.get(q) 
 
 if site_id:
-    transport_mode = input("Enter transport type (bus/train/metro): ").lower()
+    transport_mode: str = input("Enter transport type (bus/train/metro): ").lower()
 
     if transport_mode in ["bus", "train", "metro"]:
         # Create an instance of AllTransports
