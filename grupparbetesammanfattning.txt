@@ -1,0 +1,111 @@
+Rad 1: "import requests"
+Här importeras biblioteket requests, som används för att göra HTTP-förfrågningar till webbtjänster (API). I det här fallet används det för att hämta data från SL
+API.
+
+Rad 4-8: "Superklass Transport"
+Rad 4: Här definieras en klass Transport. En klass är en mall som beskriver hur objekt (instanser av klassen) ska skapas och vilka egenskaper de ska ha.
+Rad 5: Konstruktor-metoden __init__ körs automatiskt när ett objekt skapas från klassen. Den tar in site_id som ett argument, vilket är en unik identifierare för en station eller hållplats.
+Rad 6: self.site_id = site_id sparar site_id i objektet så att det kan användas senare.
+Rad 7: self.base_url = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures" skapar en URL för att hämta avgångsinformation. Här används f-strängar för att dynamiskt inkludera site_id i URL
+
+Rad 10-16: "Metoden fetch_departures"
+Rad 10: Definierar metoden fetch_departures, som ska hämta avgångsdata från SL API.
+Rad 11: requests.get(self.base_url) gör en GET-förfrågan till den URL som är sparad i base_url. Resultatet sparas i variabeln res.
+Rad 12: Kontrollerar om förfrågan lyckades genom att jämföra res.status_code med 200 (vilket betyder att förfrågan lyckades).
+Rad 13: Om statuskoden är 200, anropas metoden res.json() för att omvandla JSON-svaret till en Python-datastruktur. Sedan hämtas listan med avgångar från nyckeln "departures". Om den nyckeln inte finns 
+returneras en tom lista.
+Rad 14-16: Om förfrågan misslyckas (statuskoden inte är 200), skrivs ett felmeddelande ut med hjälp av f-strängar, och en tom lista returneras.
+
+Rad 19-28: Underklass TransportMedel
+Rad 19: Här definieras en underklass TransportMedel som ärver från Transport (använder funktionaliteten från Transport).
+Rad 20: Konstruktor-metoden __init__ initierar objektet och tar in site_id som argument.
+Rad 22: super().__init__(site_id) anropar basklassens (Transport) konstruktor för att ärva och återanvända logiken från Transport.
+Rad 25: Metoden filter_departures tar in två argument: transport_type (t.ex. buss, tåg, tunnelbana) och max_time (standardvärde 20 minuter). Denna metod kommer att filtrera avgångar baserat på dessa parametrar.
+Rad 26: departures = self.fetch_departures() hämtar alla avgångar från API
+genom att anropa metoden fetch_departures.
+Rad 27: filtered_departures = [] initierar en tom lista som ska lagra filtrerade avgångar.
+
+Rad 30: En for-loop går igenom varje avgång i listan departures.
+Rad 31: destination = departure.get("destination") hämtar destinationen för den aktuella avgången.
+Rad 32: display = departure.get("display") hämtar information om när avgången sker (hur många minuter kvar).
+Rad 33: line = departure.get("line") hämtar information om vilken linje avgången tillhör, t.ex. buss- eller tunnelbanelinje.
+Rad 35: Kontrollerar om display finns och om det innehåller ordet "min" (indikerar att avgången sker om ett visst antal minuter).
+Rad 36-38: Försöker extrahera antalet minuter från display genom att splitta strängen och konvertera första elementet till en integer. Om det misslyckas, fångar koden undantaget ValueError och fortsätter 
+till nästa avgång.
+Rad 41: Kontrollerar om line finns, om transporttypen matchar det användaren söker, och om antalet minuter till avgång (min_left) är mindre än eller lika med max_time.
+Rad 42: name = line.get("designation") hämtar linjens beteckning (t.ex. linjenummer).
+Rad 43: Den filtrerade avgången läggs till i listan filtered_departures, formaterad som en sträng med transporttyp, linjenummer, destination och hur många minuter kvar till avgång.
+Rad 45: Metoden returnerar listan med filtrerade avgångar.
+
+Rad 48-50: Klassdefinition av AllTransports
+Rad 48: Definierar en klass AllTransports som ärver från klassen TransportMedel. Detta betyder att AllTransports har tillgång till alla metoder och funktioner i TransportMedel.
+Rad 49: Konstruktor-metoden __init__ anropas när ett objekt skapas från denna klass. Den tar site_id som parameter.
+Rad 50: super().__init__(site_id) anropar basklassens konstruktor TransportMedel.__init__() och skickar vidare site_id, vilket säkerställer att all funktionalitet från Transport och TransportMedel 
+sätts upp korrekt.
+
+Rad 52-53: Metoden get_departures_by_mode
+Rad 52: Definierar en metod get_departures_by_mode, som tar in transporttypen (mode), exempelvis "bus", "train", eller "metro".
+Rad 53: Metoden anropar filter_departures, som kommer från basklassen TransportMedel. Parametern mode.upper() omvandlar transporttypen till versaler, vilket används för att matcha API-datan.
+
+Rad 57-62: Huvudlogik – Plats-ID (locations)
+Rad 57-62: Skapar en ordbok locations, där varje nyckel (nummer 1–5) motsvarar en plats och dess site_id, som är stationens/hållplatsens unika identifierare i SL
+API. Till exempel har Fittja site_id "9283" och Uppsala har "6086".
+
+Rad 65 & 67: Användarinmatning för plats
+Rad 65: En prompt visas för användaren för att mata in ett nummer från 1 till 5, där varje nummer motsvarar en plats.
+Rad 67: Användarinmatningen omvandlas till en integer (int()) och lagras i variabeln q.
+
+Rad 65: Hämtning av site_id baserat på inmatat nummer
+Rad 67: locations.get(q) försöker hämta site_id från ordboken locations baserat på användarens inmatade nummer (q). Om inmatningen inte matchar någon nyckel i ordboken returneras None.
+
+Rad 69-70: Kontroll av giltigt site_id
+Rad 69: Om site_id är giltigt (dvs. inte None), fortsätter koden. Detta förhindrar att ogiltiga platsval bearbetas.
+Rad 70: En ny inmatningsprompt visas för användaren, där de ombeds ange vilken typ av transport de är intresserade av: "bus", "train", eller "metro". input() används för att få användarens svar, 
+och .lower() konverterar inmatningen till små bokstäver för att göra jämförelserna enklare.
+
+Rad 72 & 74: Kontroll av giltig transporttyp
+Rad 72: Kontrollerar om användarens inmatade transporttyp är en av de godkända typerna: "bus", "train", eller "metro".
+Rad 74: Om transporttypen är giltig skapas ett objekt av klassen AllTransports, och site_id skickas med som argument. Detta objekt kommer att användas för att hämta avgångar baserat på plats
+och transporttyp.
+
+Rad 77: Hämta avgångar
+Rad 77: Metoden get_departures_by_mode anropas på det nyskapade AllTransports-objektet. Användarens valda transporttyp skickas som argument. Metoden returnerar en lista med avgångar filtrerade 
+baserat på transporttypen och tiden till avgång (inom 20 minuter).
+
+Rad 80-84: Visa avgångar eller ett meddelande om inga avgångar hittas
+Rad 80: Skriver ut en rubrik som anger vilken typ av transport det handlar om (t.ex. "Bus departures within 20 minutes"). Transporttypen formateras med .capitalize() för att börja med stor bokstav.
+Rad 81: Kontrollerar om listan departures innehåller några avgångar.
+Rad 82: Om det finns avgångar, skrivs varje avgång ut genom att loopa över listan departures.
+Rad 84-85: Om listan departures är tom (inga avgångar inom 20 minuter), visas ett meddelande om att det inte finns några avgångar inom den valda tidsramen.
+
+Rad 86-87: Felhantering för ogiltig transporttyp
+Rad 87: Om användaren har angett en ogiltig transporttyp (något annat än "bus", "train", eller "metro"), skrivs ett felmeddelande ut som informerar om att det var en ogiltig inmatning.
+
+Rad 88-89: Felhantering för ogiltig platsinmatning
+Rad 89: Om användarens valda plats (angivet som q) inte finns i ordboken locations, visas ett felmeddelande om att platsinmatningen var ogiltig.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
