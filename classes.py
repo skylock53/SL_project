@@ -22,7 +22,7 @@ class TransportMedel(Transport):
         super().__init__(site_id)
 
     # General method for filtering departures by transport mode
-    def filter_departures(self, transport_type: str, max_time: int = 20) -> list[str]:
+    def filter_departures(self, transport_type: str, max_time: int) -> list[str]:
         departures: list[dict] = self.fetch_departures()
         filtered_departures: list[str] = []
 
@@ -49,5 +49,5 @@ class AllTransports(TransportMedel):
     def __init__(self, site_id: str) -> None:
         super().__init__(site_id)
 
-    def get_departures_by_mode(self, mode: str) -> list[str]:
-         return self.filter_departures(mode.upper())
+    def get_departures_by_mode(self, mode: str, max_time: int) -> list[str]:
+         return self.filter_departures(mode.upper(), max_time)
