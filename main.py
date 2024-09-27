@@ -12,6 +12,8 @@ locations: dict[int, str] = {
 while True:
     try:
         q: int = int(input("Enter the number for the location:\n1. Fittja\n2. Uppsala\n3. Södertälje\n4. Sollentuna\n5. Skanstull\n"))
+        if q not in locations:
+            raise ValueError
         q2: str = int(input("Enter maximum time in minutes for departures: "))
         break
     except ValueError:
