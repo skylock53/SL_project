@@ -2,8 +2,8 @@ import requests
 
 # Superclass for general transport functionality
 class Transport:
-    def __init__(self, site_id: int) -> None:
-        self.site_id: int = site_id
+    def __init__(self, site_id: str) -> None:
+        self.site_id: str = site_id
         self.base_url: str = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
 
     # Method to fetch departures data
@@ -17,7 +17,7 @@ class Transport:
 
 # Subclass for handling Bus, Train, and Metro
 class TransportMedel(Transport):
-    def __init__(self, site_id: int) -> None:
+    def __init__(self, site_id: str) -> None:
         # Call the superclass constructor
         super().__init__(site_id)
 
@@ -46,7 +46,7 @@ class TransportMedel(Transport):
 
 # Subclass to handle all modes (Bus, Train, Metro)
 class AllTransports(TransportMedel):
-    def __init__(self, site_id: int) -> None:
+    def __init__(self, site_id: str) -> None:
         super().__init__(site_id)
 
     def get_departures_by_mode(self, mode: str) -> list[str]:
