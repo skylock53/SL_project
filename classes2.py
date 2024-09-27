@@ -2,9 +2,9 @@ import requests
 
 # Superclass for general transport functionality
 class Transport:
-    def __init__(self, site_id:int):
-        self.site_id:int = site_id
-        self.base_url: str = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
+    def __init__(self, site_id):
+        self.site_id = site_id
+        self.base_url = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
 
     # Method to fetch departures data
     def fetch_departures(self):
@@ -17,14 +17,14 @@ class Transport:
 
 # Subclass for handling Bus, Train, and Metro
 class TransportMedel(Transport):
-    def __init__(self, site_id:int) -> int:
+    def __init__(self, site_id):
         # Call the superclass constructor
         super().__init__(site_id)
 
     # General method for filtering departures by transport mode
     def filter_departures(self, transport_type, max_time=20):
         departures = self.fetch_departures()
-        filtered_departures: list = []
+        filtered_departures = []
 
         # Process each departure
         for departure in departures:
@@ -51,3 +51,39 @@ class AllTransports(TransportMedel):
 
     def get_departures_by_mode(self, mode):
          return self.filter_departures(mode.upper())
+
+
+# Main logic for user input and fetching results
+locations = {
+    1: "9283",  # Fittja
+    2: "6086",  # Uppsala
+    3: "9520",  # Södertälje
+    4: "9506",  # Sollentuna
+    5: "9190"   # Skanstull
+}
+
+q = int(input("Enter a number:\n1. Fittja\n2. Uppsala\n3. Södertälje\n4. Sollentuna\n5. Skanstull\n"))
+
+site_id = locations.get(q)
+
+if site_id:
+    transport_mode = input("Enter transport type (bus/train/metro): ").lower()
+
+    if transport_mode in ["bus", "train", "metro"]:
+        # Create an instance of AllTransports
+        transport = AllTransports(site_id)
+
+        # Fetch departures for the selected mode
+        departures = transport.get_departures_by_mode(transport_mode)
+
+        # Print filtered departures
+        print(f"{transport_mode.capitalize()} departures within 20 minutes:")
+        if departures:
+            for departure in departures:
+                print(departure)
+        else:
+         print(f"No {transport_mode} departures within the next 20 minutes.")
+    else:
+        print("Invalid transport type")
+else:
+    print("Invalid location input")
