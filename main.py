@@ -50,5 +50,3 @@ if site_id:
                 print(f"No {transport_mode} departures within the next {get_times} minutes. Please try another transport type.")
         else:
             print("Invalid transport type, please try again.")  # Loop continues if invalid input
-else:
-    print("Invalid location input")
