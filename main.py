@@ -6,17 +6,18 @@ locations: dict[int, str] = {
     2: "6086",  # Uppsala
     3: "9520",  # Södertälje
     4: "9506",  # Sollentuna
-    5: "9190"   # Skanstull
+    5: "9190",  # Skanstull
+    6: "1080"   # Stockholm City
 }
 
 # Loop to keep asking for a valid location and time
 while True:
     try:
         # Get user input for location and maximum time
-        get_loc: int = int(input("Enter the number for the location:\n1. Fittja\n2. Uppsala\n3. Södertälje\n4. Sollentuna\n5. Skanstull\n"))
+        get_loc: int = int(input("Enter the number for the location:\n1. Fittja\n2. Uppsala\n3. Södertälje\n4. Sollentuna\n5. Skanstull\n6. Stockholm City\n"))
         if get_loc not in locations:
             raise ValueError
-        get_times: str = int(input("Enter maximum time in minutes for departures: "))
+        get_times: int = int(input("Enter maximum time in minutes for departures: "))
         break
     except ValueError:
         print("Invalid input. Please enter a valid number.")
